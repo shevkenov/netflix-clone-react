@@ -1,11 +1,13 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Loading, Header } from "../components";
+
+import { Loading, Header, Card } from "../components";
 import * as ROUTES from "../constants/routes";
 import { FirebaseContext } from "../context/firebase";
 import { SelectProfileContainer } from "./profiles";
 import { FooterContainer } from "./footer";
 
-export function BrowseContainer() {
+
+export function BrowseContainer({content}) {
   const user = {
     displayName: "Karl",
     photoURL: "1",
@@ -14,12 +16,17 @@ export function BrowseContainer() {
   const [category, setCategory] = useState('series');
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
-  const { firebase } = useContext(FirebaseContext);
+  const { firebase } = useContext(FirebaseContext)
+  const [slideRows, setSlideRows] = useState([]);
 
   useEffect(() => {
     setTimeout(() => setLoading(false), 3000)
  
   }, [user])
+
+  useEffect(() => {
+    setSlideRows(content[category]);
+  },[category, content])
 
   return profile.displayName ? (
     <>
@@ -78,6 +85,30 @@ export function BrowseContainer() {
           <Header.PlayButton>Play</Header.PlayButton>
         </Header.Feature>
       </Header>
+
+      <Card.Group>
+        {slideRows.map((slide) => (
+          <Card key={`${category}-${slide.title.toLowerCase()}`}>
+            <Card.Title>{slide.title}</Card.Title>
+            <Card.Entities>
+              {slide.data.map((item) => (
+                <Card.Item key={item.docId} item={item}>
+                  <Card.Image
+                    src={`/images/${category}/${item.genre}/${item.slug}/small.jpg`}
+                  />
+                  <Card.Meta>
+                    <Card.Subtitle>{item.title}</Card.Subtitle>
+                    <Card.Text>{item.description}</Card.Text>
+                  </Card.Meta>
+                </Card.Item>
+              ))}
+            </Card.Entities>
+            <Card.Feature category={category}>
+              <p>I am the feature!</p>
+            </Card.Feature>
+          </Card>
+        ))}
+      </Card.Group>
       <FooterContainer />
     </>
   ) : (
