@@ -1,25 +1,44 @@
 import { Signin, Home, Signup, Browse } from "./pages/";
 
 import { BrowserRouter as Router, Route, Switch} from 'react-router-dom';
+import { useAuth } from './hooks/'
+import { IsUserRedirect, ProtectedRoute } from "./helpers/routes";
 
 import * as ROUTES from './constants/routes';
 
 function App() {
+  const { user } = useAuth();
+  console.log(user);
   return (
     <Router>
       <Switch>
-        <Route path={ROUTES.LOGIN}>
+        <IsUserRedirect
+          path={ROUTES.LOGIN}
+          user={user}
+          loggedInPath={ROUTES.BROWSE}
+        >
           <Signin />
-        </Route>
-        <Route path={ROUTES.SIGN_UP}>
+        </IsUserRedirect>
+        <IsUserRedirect
+          path={ROUTES.SIGN_UP}
+          user={user}
+          loggedInPath={ROUTES.BROWSE}
+        >
           <Signup />
-        </Route>
-        <Route path={ROUTES.BROWSE}>
+        </IsUserRedirect>
+        <ProtectedRoute
+          path={ROUTES.BROWSE}
+          user={user}
+        >
           <Browse />
-        </Route>
-        <Route path={ROUTES.HOME}>
+        </ProtectedRoute>
+        <IsUserRedirect
+          path={ROUTES.HOME}
+          user={user}
+          loggedInPath={ROUTES.BROWSE}
+        >
           <Home />
-        </Route>
+        </IsUserRedirect>
       </Switch>
     </Router>
   );
