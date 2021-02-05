@@ -1,6 +1,6 @@
 import React from 'react';
 
-import useContent from "../hooks/use-content";
+import { useContent } from "../hooks/";
 import { BrowseContainer } from '../containers/browse';
 import selectionMap from '../utils/selection-map';
 
